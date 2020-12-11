@@ -1,4 +1,4 @@
-import { Datasource } from "api/DatasourcesApi";
+import { Datasource, EmbeddedRestDatasource } from "entities/Datasource";
 import { DynamicPath } from "../../utils/DynamicBindingUtils";
 
 export enum PluginType {
@@ -52,10 +52,14 @@ export interface QueryActionConfig extends ActionConfig {
   body: string;
 }
 
+interface ActionDatasource {
+  id: string;
+}
+
 export interface Action {
   id: string;
   name: string;
-  datasource: Partial<Datasource>;
+  datasource: EmbeddedRestDatasource | ActionDatasource;
   organizationId: string;
   pageId: string;
   collectionId?: string;
@@ -73,6 +77,11 @@ export interface Action {
   provider?: ActionProvider;
   documentation?: { text: string };
   confirmBeforeExecute?: boolean;
+}
+
+export interface ActionWithDatasource {
+  action: Action;
+  datasource: EmbeddedRestDatasource | Datasource;
 }
 
 export interface RestAction extends Action {

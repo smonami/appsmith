@@ -253,11 +253,12 @@ export function* updateActionSaga(actionPayload: ReduxAction<{ id: string }>) {
       }
 
       let updatedAction = response.data;
+      const updatedActionDatasource = updatedAction.datasource as Datasource;
 
-      if (updatedAction.datasource.id) {
+      if (updatedActionDatasource.id) {
         const datasource = yield select(
           getDatasource,
-          updatedAction.datasource.id,
+          updatedActionDatasource.id,
         );
 
         updatedAction = {

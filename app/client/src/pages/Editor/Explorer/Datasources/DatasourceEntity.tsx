@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Datasource } from "api/DatasourcesApi";
+import { Datasource } from "entities/Datasource";
 import { Plugin } from "api/PluginApi";
 import DataSourceContextMenu from "./DataSourceContextMenu";
 import { getPluginIcon } from "../ExplorerIcons";
@@ -90,7 +90,7 @@ export const ExplorerDatasourceEntity = (
       searchKeyword={props.searchKeyword}
       isDefaultExpanded={
         expandDatasourceId === props.datasource.id ||
-        queryAction?.datasource.id === props.datasource.id
+        (queryAction?.datasource as Datasource).id === props.datasource.id
       }
       action={switchDatasource}
       updateEntityName={updateDatasourceName}

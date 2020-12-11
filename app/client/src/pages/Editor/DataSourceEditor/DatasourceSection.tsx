@@ -1,4 +1,4 @@
-import { Datasource } from "api/DatasourcesApi";
+import { Datasource } from "entities/Datasource";
 import React from "react";
 import { map, get } from "lodash";
 import { Colors } from "constants/Colors";

@@ -11,7 +11,7 @@ import { AppState } from "reducers";
 import { getIsEditorInitialized } from "selectors/editorSelectors";
 import { QUERY_EDITOR_FORM_NAME } from "constants/forms";
 import { Plugin } from "api/PluginApi";
-import { Datasource } from "api/DatasourcesApi";
+import { Datasource } from "entities/Datasource";
 import {
   getPluginIdsOfPackageNames,
   getPlugins,
@@ -182,7 +182,7 @@ const mapStateToProps = (state: AppState, props: any): ReduxStateProps => {
   const formData = getFormValues(QUERY_EDITOR_FORM_NAME)(state) as QueryAction;
   const queryAction = getAction(state, props.match.params.queryId);
   let editorConfig: any;
-  const pluginId = queryAction?.datasource?.pluginId;
+  const pluginId = (queryAction?.datasource as Datasource)?.pluginId;
 
   if (editorConfigs && pluginId) {
     editorConfig = editorConfigs[pluginId];
