@@ -194,6 +194,7 @@ function getEvaluatedDataTree(dataTree: DataTree): DataTree {
     evaluate: (evaluatedTreeEnd - evaluatedTreeStart).toFixed(2),
     loading: (loadingTreeEnd - loadingTreeStart).toFixed(2),
     validate: (validateTreeEnd - validateTreeStart).toFixed(2),
+    evalPaths: sortedDependencies.length,
   };
   LOGS.push({ timeTaken });
   // dataTreeCache = validated;
@@ -901,7 +902,6 @@ function evaluateDynamicProperty(
   if (isCacheHit && cacheObj) {
     return cacheObj.evaluated;
   } else {
-    LOGS.push("eval " + propertyPath);
     const dynamicResult = getDynamicValue(
       unEvalPropertyValue,
       currentTree,

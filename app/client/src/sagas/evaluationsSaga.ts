@@ -56,7 +56,7 @@ const evalErrorHandler = (errors: EvalError[]) => {
       });
       Sentry.captureException(error);
     }
-    log.debug(error);
+    // log.debug(error);
   });
 };
 
@@ -73,7 +73,7 @@ function* evaluateTreeSaga(postEvalActions?: ReduxAction<unknown>[]) {
   const traceId = _.uniqueId();
   const allStart = performance.now();
   const unEvalTree = yield select(getUnevaluatedDataTree);
-  log.debug({ unEvalTree });
+  // log.debug({ unEvalTree });
   const getUnevalTreeEnd = performance.now();
   const workerResponse = yield call(
     worker.request,
@@ -96,10 +96,10 @@ function* evaluateTreeSaga(postEvalActions?: ReduxAction<unknown>[]) {
     payload: dataTree,
   });
   const allEnd = performance.now();
-  console.warn({
+  console.log({
     traceId: traceId,
-    selectUnevalTree: getUnevalTreeEnd - allStart,
-    evalTreeDispatchAndRender: allEnd - evalTreeDispatchStart,
+    selectUnevalTree: (getUnevalTreeEnd - allStart).toFixed(2),
+    evalTreeDispatchAndRender: (allEnd - evalTreeDispatchStart).toFixed(2),
   });
   PerformanceTracker.stopAsyncTracking(
     PerformanceTransactionName.DATA_TREE_EVALUATION,
