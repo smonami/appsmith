@@ -48,7 +48,9 @@ export const QueryTemplates = (props: QueryTemplatesProps) => {
     (template: QueryTemplate) => {
       const newQueryName = createNewQueryName(actions, currentPageId || "");
       const queryactionConfiguration: Partial<QueryAction> = {
-        actionConfiguration: { body: template.body },
+        actionConfiguration: {
+          body: template.body,
+        },
       };
 
       dispatch(

@@ -44,10 +44,10 @@ import { getPluginIdOfPackageName } from "sagas/selectors";
 import { getAction, getActions, getPlugins } from "selectors/entitiesSelector";
 import { ActionData } from "reducers/entityReducers/actionsReducer";
 import { createActionRequest, setActionProperty } from "actions/actionActions";
-import { Datasource } from "api/DatasourcesApi";
+import { Datasource } from "entities/Datasource";
 import { Plugin } from "api/PluginApi";
 import { PLUGIN_PACKAGE_DBS } from "constants/QueryEditorConstants";
-import { RestAction } from "entities/Action";
+import { Action } from "entities/Action";
 import { getCurrentOrgId } from "selectors/organizationSelectors";
 import log from "loglevel";
 import PerformanceTracker, {
@@ -302,7 +302,7 @@ function* formValueChangeSaga(
   ]);
 }
 
-function* handleActionCreatedSaga(actionPayload: ReduxAction<RestAction>) {
+function* handleActionCreatedSaga(actionPayload: ReduxAction<Action>) {
   const { id, pluginType } = actionPayload.payload;
   const action = yield select(getAction, id);
   const data = { ...action };

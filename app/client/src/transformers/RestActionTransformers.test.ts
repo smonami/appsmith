@@ -1,10 +1,10 @@
 import { transformRestAction } from "transformers/RestActionTransformer";
-import { PluginType, RestAction } from "entities/Action";
+import { PluginType, Action } from "entities/Action";
 import { POST_BODY_FORMAT_OPTIONS } from "constants/ApiEditorConstants";
 
 // jest.mock("POST_");
 
-const BASE_ACTION: RestAction = {
+const BASE_ACTION: Action = {
   dynamicBindingPathList: [],
   cacheResponse: "",
   executeOnLoad: false,
@@ -28,7 +28,7 @@ const BASE_ACTION: RestAction = {
 
 describe("Api action transformer", () => {
   it("Removes params from path", () => {
-    const input: RestAction = {
+    const input: Action = {
       ...BASE_ACTION,
       actionConfiguration: {
         ...BASE_ACTION.actionConfiguration,

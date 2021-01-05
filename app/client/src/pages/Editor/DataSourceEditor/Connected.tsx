@@ -145,9 +145,9 @@ const Connected = () => {
       createActionRequest({
         name: newApiName,
         pageId: currentPageId,
-        pluginId: datasource?.pluginId,
+        pluginId: datasource.pluginId,
         datasource: {
-          id: datasource?.id,
+          id: datasource.id,
         },
         eventData: {
           actionType: "API",

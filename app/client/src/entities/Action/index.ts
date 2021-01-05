@@ -102,6 +102,7 @@ export type RapidApiAction = ApiAction & {
 export interface QueryAction extends BaseAction {
   pluginType: PluginType.DB;
   actionConfiguration: QueryActionConfig;
+  datasource: ActionDatasource;
 }
 
 export type Action = ApiAction | QueryAction;

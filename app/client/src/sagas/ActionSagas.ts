@@ -11,7 +11,7 @@ import {
   takeEvery,
   takeLatest,
 } from "redux-saga/effects";
-import { Datasource } from "api/DatasourcesApi";
+import { Datasource } from "entities/Datasource";
 import ActionAPI, { ActionCreateUpdateResponse, Property } from "api/ActionAPI";
 import _ from "lodash";
 import { GenericApiResponse } from "api/ApiResponses";
@@ -44,7 +44,7 @@ import {
 } from "selectors/editorSelectors";
 import AnalyticsUtil from "utils/AnalyticsUtil";
 import { QUERY_CONSTANT } from "constants/QueryEditorConstants";
-import { Action, RestAction } from "entities/Action";
+import { Action } from "entities/Action";
 import { ActionData } from "reducers/entityReducers/actionsReducer";
 import {
   getAction,
@@ -121,7 +121,7 @@ export function* fetchActionsSaga(action: ReduxAction<FetchActionsPayload>) {
     { mode: "EDITOR", appId: applicationId },
   );
   try {
-    const response: GenericApiResponse<RestAction[]> = yield ActionAPI.fetchActions(
+    const response: GenericApiResponse<Action[]> = yield ActionAPI.fetchActions(
       applicationId,
     );
     const isValidResponse = yield validateResponse(response);
@@ -155,7 +155,7 @@ export function* fetchActionsForViewModeSaga(
     { mode: "VIEWER", appId: applicationId },
   );
   try {
-    const response: GenericApiResponse<RestAction[]> = yield ActionAPI.fetchActionsForViewMode(
+    const response: GenericApiResponse<Action[]> = yield ActionAPI.fetchActionsForViewMode(
       applicationId,
     );
     const isValidResponse = yield validateResponse(response);
@@ -189,7 +189,7 @@ export function* fetchActionsForPageSaga(
     { pageId: pageId },
   );
   try {
-    const response: GenericApiResponse<RestAction[]> = yield call(
+    const response: GenericApiResponse<Action[]> = yield call(
       ActionAPI.fetchActionsByPageId,
       pageId,
     );
@@ -225,11 +225,9 @@ export function* updateActionSaga(actionPayload: ReduxAction<{ id: string }>) {
     if (isApi) {
       action = transformRestAction(action);
     }
-    if (isApi || isDB) {
-      action = _.omit(action, "name") as RestAction;
-    }
+    action = _.omit(action, "name") as Action;
 
-    const response: GenericApiResponse<RestAction> = yield ActionAPI.updateAPI(
+    const response: GenericApiResponse<Action> = yield ActionAPI.updateAPI(
       action,
     );
     const isValidResponse = yield validateResponse(response);
@@ -296,7 +294,7 @@ export function* deleteActionSaga(
     const isApi = action.pluginType === PLUGIN_TYPE_API;
     const isQuery = action.pluginType === QUERY_CONSTANT;
 
-    const response: GenericApiResponse<RestAction> = yield ActionAPI.deleteAction(
+    const response: GenericApiResponse<Action> = yield ActionAPI.deleteAction(
       id,
     );
     const isValidResponse = yield validateResponse(response);
@@ -345,7 +343,7 @@ function* moveActionSaga(
     name: string;
   }>,
 ) {
-  const actionObject: RestAction = yield select(getAction, action.payload.id);
+  const actionObject: Action = yield select(getAction, action.payload.id);
   const withoutBindings = removeBindingsFromActionObject(actionObject);
   try {
     const response = yield ActionAPI.moveAction({
@@ -388,13 +386,13 @@ function* moveActionSaga(
 function* copyActionSaga(
   action: ReduxAction<{ id: string; destinationPageId: string; name: string }>,
 ) {
-  let actionObject: RestAction = yield select(getAction, action.payload.id);
+  let actionObject: Action = yield select(getAction, action.payload.id);
   if (action.payload.destinationPageId !== actionObject.pageId) {
     actionObject = removeBindingsFromActionObject(actionObject);
   }
   try {
     const copyAction = {
-      ...(_.omit(actionObject, "id") as RestAction),
+      ...(_.omit(actionObject, "id") as Action),
       name: action.payload.name,
       pageId: action.payload.destinationPageId,
     };

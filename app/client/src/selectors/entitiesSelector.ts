@@ -7,7 +7,7 @@ import { ActionResponse } from "api/ActionAPI";
 import { QUERY_CONSTANT } from "constants/QueryEditorConstants";
 import { createSelector } from "reselect";
 import { Datasource } from "entities/Datasource";
-import { Action, ActionWithDatasource } from "entities/Action";
+import { Action, ActionWithDatasource, QueryAction } from "entities/Action";
 import { find } from "lodash";
 import ImageAlt from "assets/images/placeholder-image.svg";
 import { CanvasWidgetsReduxState } from "../reducers/entityReducers/canvasWidgetsReducer";
@@ -108,6 +108,19 @@ export const getDatasource = (
     (datasource) => datasource.id === datasourceId,
   );
 
+export const getEnforcedDatasource = (
+  state: AppState,
+  datasourceId: string,
+): Datasource => {
+  const result = state.entities.datasources.list.find(
+    (datasource) => datasource.id === datasourceId,
+  );
+  if (result === undefined) {
+    throw new Error("Could not find datasource with id :" + datasourceId);
+  }
+  return result;
+};
+
 export const getDatasourceDraft = (state: AppState, id: string) => {
   const drafts = state.ui.datasourcePane.drafts;
   if (id in drafts) return drafts[id];
@@ -204,7 +217,7 @@ export const getActionsForCurrentPage = createSelector(
 
 export const getQueryActionsForCurrentPage = createSelector(
   getActionsForCurrentPage,
-  (actions) => {
+  (actions): QueryAction[] => {
     return actions.filter((action: ActionData) => {
       return action.config.pluginType === QUERY_CONSTANT;
     });

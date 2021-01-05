@@ -23,7 +23,7 @@ import { Colors } from "constants/Colors";
 import JSONViewer from "./JSONViewer";
 import FormControl from "../FormControl";
 import Table from "./Table";
-import { RestAction } from "entities/Action";
+import { Action } from "entities/Action";
 import { connect, useDispatch } from "react-redux";
 import { AppState } from "reducers";
 import ActionNameEditor from "components/editorComponents/ActionNameEditor";
@@ -291,8 +291,7 @@ type ReduxProps = {
 
 export type StateAndRouteProps = QueryFormProps & ReduxProps;
 
-type Props = StateAndRouteProps &
-  InjectedFormProps<RestAction, StateAndRouteProps>;
+type Props = StateAndRouteProps & InjectedFormProps<Action, StateAndRouteProps>;
 
 const QueryEditorForm: React.FC<Props> = (props: Props) => {
   const {
@@ -639,7 +638,7 @@ const mapStateToProps = (state: AppState) => {
 };
 
 export default connect(mapStateToProps)(
-  reduxForm<RestAction, StateAndRouteProps>({
+  reduxForm<Action, StateAndRouteProps>({
     form: QUERY_EDITOR_FORM_NAME,
     enableReinitialize: true,
   })(QueryEditorForm),
