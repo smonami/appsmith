@@ -5,7 +5,7 @@ import {
   DEFAULT_EXECUTE_ACTION_TIMEOUT_MS,
 } from "constants/ApiConstants";
 import axios, { AxiosPromise, CancelTokenSource } from "axios";
-import { Action, RestAction } from "entities/Action";
+import { Action } from "entities/Action";
 
 export interface CreateActionRequest<T> extends APIRequest {
   datasourceId: string;
@@ -88,12 +88,12 @@ export interface ActionResponse {
 }
 
 export interface MoveActionRequest {
-  action: RestAction;
+  action: Action;
   destinationPageId: string;
 }
 
 export interface CopyActionRequest {
-  action: RestAction;
+  action: Action;
   pageId: string;
 }
 
@@ -109,7 +109,7 @@ class ActionAPI extends API {
   static apiUpdateCancelTokenSource: CancelTokenSource;
   static queryUpdateCancelTokenSource: CancelTokenSource;
 
-  static fetchAPI(id: string): AxiosPromise<GenericApiResponse<RestAction>> {
+  static fetchAPI(id: string): AxiosPromise<GenericApiResponse<Action>> {
     return API.get(`${ActionAPI.url}/${id}`);
   }
 
@@ -121,24 +121,24 @@ class ActionAPI extends API {
 
   static fetchActions(
     applicationId: string,
-  ): AxiosPromise<GenericApiResponse<RestAction[]>> {
+  ): AxiosPromise<GenericApiResponse<Action[]>> {
     return API.get(ActionAPI.url, { applicationId });
   }
 
   static fetchActionsForViewMode(
     applicationId: string,
-  ): AxiosPromise<GenericApiResponse<RestAction[]>> {
+  ): AxiosPromise<GenericApiResponse<Action[]>> {
     return API.get(`${ActionAPI.url}/view`, { applicationId });
   }
 
   static fetchActionsByPageId(
     pageId: string,
-  ): AxiosPromise<GenericApiResponse<RestAction[]>> {
+  ): AxiosPromise<GenericApiResponse<Action[]>> {
     return API.get(ActionAPI.url, { pageId });
   }
 
   static updateAPI(
-    apiConfig: Partial<RestAction>,
+    apiConfig: Partial<Action>,
   ): AxiosPromise<ActionCreateUpdateResponse> {
     if (ActionAPI.apiUpdateCancelTokenSource) {
       ActionAPI.apiUpdateCancelTokenSource.cancel();

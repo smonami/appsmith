@@ -56,49 +56,57 @@ interface ActionDatasource {
   id: string;
 }
 
-export interface Action {
+interface BaseAction {
   id: string;
   name: string;
-  datasource: EmbeddedRestDatasource | ActionDatasource;
+  //datasource: EmbeddedRestDatasource | ActionDatasource;
   organizationId: string;
   pageId: string;
   collectionId?: string;
-  actionConfiguration: Partial<ActionConfig>;
+  //actionConfiguration: Partial<ActionConfig>;
   pluginId: string;
-  pluginType: PluginType;
+  //pluginType: PluginType;
   executeOnLoad: boolean;
   dynamicBindingPathList: DynamicPath[];
   isValid: boolean;
   invalids: string[];
   jsonPathKeys: string[];
   cacheResponse: string;
-  templateId?: string;
-  providerId?: string;
-  provider?: ActionProvider;
-  documentation?: { text: string };
   confirmBeforeExecute?: boolean;
-}
-
-export interface ActionWithDatasource {
-  action: Action;
-  datasource: EmbeddedRestDatasource | Datasource;
-}
-
-export interface RestAction extends Action {
-  actionConfiguration: Partial<ApiActionConfig>;
   eventData?: any;
 }
 
-export interface RapidApiAction extends Action {
-  actionConfiguration: Partial<ApiActionConfig>;
+interface BaseApiAction extends BaseAction {
+  pluginType: PluginType.API;
+  actionConfiguration: ApiActionConfig;
+}
+
+export interface EmbeddedApiAction extends BaseApiAction {
+  datasource: EmbeddedRestDatasource;
+}
+
+export interface DatasourceApiAction extends BaseApiAction {
+  datasource: ActionDatasource;
+}
+
+export type ApiAction = EmbeddedApiAction | DatasourceApiAction;
+
+export type RapidApiAction = ApiAction & {
   templateId: string;
   proverId: string;
   provider: ActionProvider;
   pluginId: string;
   documentation: { text: string };
+};
+
+export interface QueryAction extends BaseAction {
+  pluginType: PluginType.DB;
+  actionConfiguration: QueryActionConfig;
 }
 
-export interface QueryAction extends Action {
-  actionConfiguration: Partial<QueryActionConfig>;
-  eventData?: any;
+export type Action = ApiAction | QueryAction;
+
+export interface ActionWithDatasource {
+  action: Action;
+  datasource: EmbeddedRestDatasource | Datasource;
 }

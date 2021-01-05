@@ -105,7 +105,7 @@ export class DataTreeFactory {
           }),
         );
       }
-      dataTree[action.config.name] = {
+      const dataTreeAction: DataTreeAction = {
         run: {},
         actionId: action.config.id,
         name: action.config.name,
@@ -116,6 +116,7 @@ export class DataTreeFactory {
         ENTITY_TYPE: ENTITY_TYPE.ACTION,
         isLoading: action.isLoading,
       };
+      dataTree[action.config.name] = dataTreeAction;
     });
     Object.keys(widgets).forEach((w) => {
       const widget = { ...widgets[w] };

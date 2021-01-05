@@ -97,17 +97,20 @@ const Connected = () => {
         from: "datasource-pane",
       },
     };
-
-    // If in onboarding and tooltip is being shown
-    if (isInOnboarding && showingTooltip === OnboardingStep.EXAMPLE_DATABASE) {
-      payload = {
-        ...payload,
-        name: "ExampleQuery",
-        actionConfiguration: {
-          body: "select * from public.users limit 10",
-        },
-      };
-    }
+    if (datasource)
+      if (
+        isInOnboarding &&
+        showingTooltip === OnboardingStep.EXAMPLE_DATABASE
+      ) {
+        // If in onboarding and tooltip is being shown
+        payload = {
+          ...payload,
+          name: "ExampleQuery",
+          actionConfiguration: {
+            body: "select * from public.users limit 10",
+          },
+        };
+      }
 
     dispatch(createActionRequest(payload));
     history.push(
