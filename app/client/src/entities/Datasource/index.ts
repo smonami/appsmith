@@ -1,5 +1,5 @@
 import { Property } from "entities/Action";
-import { EmbeddedRestDatasourceRequest } from "api/DatasourcesApi";
+import _ from "lodash";
 export interface DatasourceAuthentication {
   authType?: string;
   username?: string;
@@ -40,10 +40,22 @@ interface BaseDatasource {
   isValid: boolean;
 }
 
+export const isEmbeddedRestDatasource = (
+  val: any,
+): val is EmbeddedRestDatasource => {
+  if (!_.isObject(val)) return false;
+  if (!("datasourceConfiguration" in val)) return false;
+  val = <EmbeddedRestDatasource>val;
+  // Object should exist and have value
+  if (!val.datasourceConfiguration) return false;
+  //url might exist as a key but not have value, so we won't check value
+  if (!("url" in val.datasourceConfiguration)) return false;
+  return true;
+};
+
 export interface EmbeddedRestDatasource extends BaseDatasource {
   datasourceConfiguration: { url: string };
   invalids: Array<string>;
-  organizationId: string;
 }
 export interface Datasource extends BaseDatasource {
   id: string;

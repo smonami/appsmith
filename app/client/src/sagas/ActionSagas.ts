@@ -44,7 +44,7 @@ import {
 } from "selectors/editorSelectors";
 import AnalyticsUtil from "utils/AnalyticsUtil";
 import { QUERY_CONSTANT } from "constants/QueryEditorConstants";
-import { Action } from "entities/Action";
+import { Action, isActionDatasource } from "entities/Action";
 import { ActionData } from "reducers/entityReducers/actionsReducer";
 import {
   getAction,
@@ -218,14 +218,14 @@ export function* updateActionSaga(actionPayload: ReduxAction<{ id: string }>) {
       PerformanceTransactionName.UPDATE_ACTION_API,
       { actionid: actionPayload.payload.id },
     );
-    let action: Action = yield select(getAction, actionPayload.payload.id);
+    let action = yield select(getAction, actionPayload.payload.id);
+    if (!action) throw new Error("Could not find action to update");
     const isApi = action.pluginType === "API";
     const isDB = action.pluginType === "DB";
 
     if (isApi) {
       action = transformRestAction(action);
     }
-    action = _.omit(action, "name") as Action;
 
     const response: GenericApiResponse<Action> = yield ActionAPI.updateAPI(
       action,
@@ -251,18 +251,19 @@ export function* updateActionSaga(actionPayload: ReduxAction<{ id: string }>) {
       }
 
       let updatedAction = response.data;
-      const updatedActionDatasource = updatedAction.datasource as Datasource;
+      const updatedActionDatasource = updatedAction.datasource;
 
-      if (updatedActionDatasource.id) {
+      if (isActionDatasource(updatedActionDatasource)) {
         const datasource = yield select(
           getDatasource,
           updatedActionDatasource.id,
         );
-
-        updatedAction = {
-          ...updatedAction,
-          datasource,
-        };
+        if (datasource) {
+          updatedAction = {
+            ...updatedAction,
+            datasource,
+          };
+        }
       }
 
       PerformanceTracker.stopAsyncTracking(
@@ -387,15 +388,16 @@ function* copyActionSaga(
   action: ReduxAction<{ id: string; destinationPageId: string; name: string }>,
 ) {
   let actionObject: Action = yield select(getAction, action.payload.id);
-  if (action.payload.destinationPageId !== actionObject.pageId) {
-    actionObject = removeBindingsFromActionObject(actionObject);
-  }
   try {
-    const copyAction = {
-      ...(_.omit(actionObject, "id") as Action),
+    if (!actionObject) throw new Error("Could not find action to copy");
+    if (action.payload.destinationPageId !== actionObject.pageId) {
+      actionObject = removeBindingsFromActionObject(actionObject);
+    }
+
+    const copyAction = Object.assign({}, actionObject, {
       name: action.payload.name,
       pageId: action.payload.destinationPageId,
-    };
+    });
     const response = yield ActionAPI.createAPI(copyAction);
     const datasources = yield select(getDataSources);
 
@@ -428,7 +430,9 @@ function* copyActionSaga(
     yield put(copyActionSuccess(payload));
   } catch (e) {
     Toaster.show({
-      text: `Error while copying action ${actionObject.name}`,
+      text: `Error while copying action ${
+        actionObject ? actionObject.name : ""
+      }`,
       variant: Variant.danger,
     });
     yield put(copyActionError(action.payload));

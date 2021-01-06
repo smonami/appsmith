@@ -1,5 +1,6 @@
 import { Datasource, EmbeddedRestDatasource } from "entities/Datasource";
 import { DynamicPath } from "../../utils/DynamicBindingUtils";
+import _ from "lodash";
 
 export enum PluginType {
   API = "API",
@@ -52,7 +53,12 @@ export interface QueryActionConfig extends ActionConfig {
   body: string;
 }
 
-interface ActionDatasource {
+export const isActionDatasource = (val: any): val is ActionDatasource => {
+  if (!_.isObject(val)) return false;
+  if (!("id" in val)) return false;
+  return true;
+};
+export interface ActionDatasource {
   id: string;
 }
 

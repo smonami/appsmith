@@ -6,6 +6,7 @@ import {
 } from "constants/ApiConstants";
 import axios, { AxiosPromise, CancelTokenSource } from "axios";
 import { Action } from "entities/Action";
+import _ from "lodash";
 
 export interface CreateActionRequest<T> extends APIRequest {
   datasourceId: string;
@@ -116,7 +117,11 @@ class ActionAPI extends API {
   static createAPI(
     apiConfig: Partial<Action>,
   ): AxiosPromise<ActionCreateUpdateResponse> {
-    return API.post(ActionAPI.url, apiConfig);
+    const action = Object.assign({}, apiConfig);
+    // In case we were sent an action with an id, delete it before sending to the server
+    // Example: createAPI
+    delete action.id;
+    return API.post(ActionAPI.url, action);
   }
 
   static fetchActions(
@@ -144,7 +149,10 @@ class ActionAPI extends API {
       ActionAPI.apiUpdateCancelTokenSource.cancel();
     }
     ActionAPI.apiUpdateCancelTokenSource = axios.CancelToken.source();
-    return API.put(`${ActionAPI.url}/${apiConfig.id}`, apiConfig, undefined, {
+    const action = Object.assign({}, apiConfig);
+    // While this line is not required, name can not be changed from this endpoint
+    delete action.name;
+    return API.put(`${ActionAPI.url}/${action.id}`, action, undefined, {
       cancelToken: ActionAPI.apiUpdateCancelTokenSource.token,
     });
   }

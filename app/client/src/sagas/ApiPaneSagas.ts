@@ -47,7 +47,7 @@ import { createActionRequest, setActionProperty } from "actions/actionActions";
 import { Datasource } from "entities/Datasource";
 import { Plugin } from "api/PluginApi";
 import { PLUGIN_PACKAGE_DBS } from "constants/QueryEditorConstants";
-import { Action } from "entities/Action";
+import { Action, ApiAction } from "entities/Action";
 import { getCurrentOrgId } from "selectors/organizationSelectors";
 import log from "loglevel";
 import PerformanceTracker, {
@@ -350,7 +350,7 @@ function* handleCreateNewApiActionSaga(
           from: action.payload.from,
         },
         pageId,
-      }),
+      } as ApiAction), // We don't have recursive partial in typescript for now.
     );
     history.push(
       API_EDITOR_URL_WITH_SELECTED_PAGE_ID(applicationId, pageId, pageId),
@@ -393,7 +393,11 @@ function* handleCreateNewQueryActionSaga(
           from: action.payload.from,
           dataSource: validDataSources[0].name,
         },
-        actionConfiguration: {},
+        actionConfiguration: {
+          headers: [],
+          httpMethod: "GET",
+          timeoutInMillisecond: 10000,
+        },
       }),
     );
     history.push(

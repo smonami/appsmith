@@ -6,8 +6,8 @@ import {
 import { ActionResponse } from "api/ActionAPI";
 import { QUERY_CONSTANT } from "constants/QueryEditorConstants";
 import { createSelector } from "reselect";
-import { Datasource } from "entities/Datasource";
-import { Action, ActionWithDatasource, QueryAction } from "entities/Action";
+import { Datasource, isEmbeddedRestDatasource } from "entities/Datasource";
+import { Action, ActionWithDatasource } from "entities/Action";
 import { find } from "lodash";
 import ImageAlt from "assets/images/placeholder-image.svg";
 import { CanvasWidgetsReduxState } from "../reducers/entityReducers/canvasWidgetsReducer";
@@ -217,8 +217,8 @@ export const getActionsForCurrentPage = createSelector(
 
 export const getQueryActionsForCurrentPage = createSelector(
   getActionsForCurrentPage,
-  (actions): QueryAction[] => {
-    return actions.filter((action: ActionData) => {
+  (actions) => {
+    return actions.filter((action) => {
       return action.config.pluginType === QUERY_CONSTANT;
     });
   },
@@ -255,18 +255,15 @@ export const getActionWithDatasource = (
 
   // If there's no datasource with action, something terrible has happened
   if (!action || !action.datasource) return;
-  if (typeof action.datasource === EmbeddedDatasource)
-    if (!action.datasource.id) {
-      // If there's no id on action.datasource, then the action.datasource object is complete
-      return { action: action, datasource: action.datasource };
-    }
-
-  const datasource = getDatasource(action.datasource.id);
-
-  if (datasource) {
-    config.datasource = { ...datasource };
+  if (isEmbeddedRestDatasource(action.datasource)) {
+    // If there's no id on action.datasource, then the action.datasource object is complete
+    return { action: action, datasource: action.datasource };
   }
-  return { action: config, datasource };
+
+  const datasource = getDatasource(state, action.datasource.id);
+  if (!datasource) return;
+
+  return { action, datasource };
 };
 
 export function getCurrentPageNameByActionId(

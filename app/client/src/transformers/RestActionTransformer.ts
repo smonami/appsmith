@@ -3,9 +3,11 @@ import {
   HTTP_METHODS,
   POST_BODY_FORMAT_OPTIONS,
 } from "constants/ApiEditorConstants";
+
+import { ApiAction } from "entities/Action";
 import _ from "lodash";
 
-export const transformRestAction = (data: any): any => {
+export const transformRestAction = (data: ApiAction): ApiAction => {
   let action = { ...data };
   // GET actions should not save body
   if (action.actionConfiguration.httpMethod === HTTP_METHODS[0]) {

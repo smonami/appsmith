@@ -50,6 +50,7 @@ export const QueryTemplates = (props: QueryTemplatesProps) => {
       const queryactionConfiguration: Partial<QueryAction> = {
         actionConfiguration: {
           body: template.body,
+          timeoutInMillisecond: 10000,
         },
       };
 
