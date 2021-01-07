@@ -18,7 +18,12 @@ import {
 import { createNewApiName, createNewQueryName } from "utils/AppsmithUtils";
 import { getCurrentPageId } from "selectors/editorSelectors";
 import { DEFAULT_API_ACTION } from "constants/ApiEditorConstants";
-import { ApiActionConfig, PluginType } from "entities/Action";
+import {
+  ApiActionConfig,
+  PluginType,
+  ApiAction,
+  QueryAction,
+} from "entities/Action";
 import { renderDatasourceSection } from "./DatasourceSection";
 import { Toaster } from "components/ads/Toast";
 import { Variant } from "components/ads/common";
@@ -96,20 +101,19 @@ const Connected = () => {
         actionType: "Query",
         from: "datasource-pane",
       },
-    };
+    } as Partial<QueryAction>; // TODO: refactor later
     if (datasource)
       if (
         isInOnboarding &&
         showingTooltip === OnboardingStep.EXAMPLE_DATABASE
       ) {
         // If in onboarding and tooltip is being shown
-        payload = {
-          ...payload,
+        payload = Object.assign({}, payload, {
           name: "ExampleQuery",
           actionConfiguration: {
             body: "select * from public.users limit 10",
           },
-        };
+        });
       }
 
     dispatch(createActionRequest(payload));
@@ -156,7 +160,7 @@ const Connected = () => {
         actionConfiguration: {
           ...defaultAction,
         },
-      }),
+      } as ApiAction), // TODO: refactor later
     );
     history.push(
       API_EDITOR_URL_WITH_SELECTED_PAGE_ID(
